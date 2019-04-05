@@ -69,6 +69,8 @@ add_library(video_core STATIC
     texture/etc1.h
     texture/texture_decode.cpp
     texture/texture_decode.h
+    texture/texture_dump.cpp
+    texture/texture_dump.h
     utils.h
     vertex_loader.cpp
     vertex_loader.h

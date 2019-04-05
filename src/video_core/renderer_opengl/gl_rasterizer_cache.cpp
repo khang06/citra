@@ -24,11 +24,13 @@
 #include "common/vector_math.h"
 #include "core/frontend/emu_window.h"
 #include "core/memory.h"
+#include "core/settings.h"
 #include "video_core/pica_state.h"
 #include "video_core/renderer_base.h"
 #include "video_core/renderer_opengl/gl_rasterizer_cache.h"
 #include "video_core/renderer_opengl/gl_state.h"
 #include "video_core/renderer_opengl/gl_vars.h"
+#include "video_core/texture/texture_dump.h"
 #include "video_core/utils.h"
 #include "video_core/video_core.h"
 
@@ -798,6 +800,10 @@ void CachedSurface::LoadGLBuffer(PAddr load_start, PAddr load_end) {
                     std::memcpy(&gl_buffer[offset], vec4.AsArray(), 4);
                 }
             }
+
+            if (Settings::values.dump_textures)
+                Pica::Texture::DumpTextureToPNG(texture_src_data, tex_info);
+
         } else {
             morton_to_gl_fns[static_cast<std::size_t>(pixel_format)](stride, height, &gl_buffer[0],
                                                                      addr, load_start, load_end);

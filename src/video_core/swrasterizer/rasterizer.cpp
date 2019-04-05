@@ -16,6 +16,7 @@
 #include "common/vector_math.h"
 #include "core/hw/gpu.h"
 #include "core/memory.h"
+#include "core/settings.h"
 #include "video_core/debug_utils/debug_utils.h"
 #include "video_core/pica_state.h"
 #include "video_core/pica_types.h"
@@ -29,6 +30,7 @@
 #include "video_core/swrasterizer/rasterizer.h"
 #include "video_core/swrasterizer/texturing.h"
 #include "video_core/texture/texture_decode.h"
+#include "video_core/texture/texture_dump.h"
 #include "video_core/utils.h"
 #include "video_core/video_core.h"
 
@@ -411,6 +413,10 @@ static void ProcessTriangleInternal(const Vertex& v0, const Vertex& v1, const Ve
 
                     // TODO: Apply the min and mag filters to the texture
                     texture_color[i] = Texture::LookupTexture(texture_data, s, t, info);
+
+                    // TODO: Can this be placed in a better spot?
+                    if (Settings::values.dump_textures)
+                        Pica::Texture::DumpTextureToPNG(texture_data, info);
                 }
 
                 if (i == 0 && (texture.config.type == TexturingRegs::TextureConfig::Shadow2D ||
