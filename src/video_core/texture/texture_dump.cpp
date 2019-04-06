@@ -5,16 +5,14 @@
 #include <lodepng.h>
 #include "common/file_util.h"
 #include "common/hash.h"
+#include "common/math_util.h"
 #include "core/core.h"
 #include "core/hle/kernel/process.h"
 #include "video_core/texture/texture_dump.h"
 
 namespace Pica::Texture {
 
-void DumpTextureToPNG(const u8* source, const TextureInfo& info) {
-    // Hash the encoded texture
-    const u64 tex_hash = Common::ComputeHash64(source, info.stride * info.height);
-
+void DumpTextureToPNG(const u8* source, const TextureInfo& info, const Common::Rectangle<u32>& rect) {
     // Make destination folder if it doesn't already exist
     const std::string dump_dir =
         fmt::format("{}/textures/{:016X}/", FileUtil::GetUserPath(FileUtil::UserPath::DumpDir),
@@ -23,6 +21,9 @@ void DumpTextureToPNG(const u8* source, const TextureInfo& info) {
         LOG_ERROR(Render, "Unable to create {}", dump_dir);
         return;
     }
+
+    // Hash the encoded texture
+    const u64 tex_hash = Common::ComputeHash64(source, info.stride * info.height);
 
     // Check if the texture was already dumped
     const std::string dump_path = fmt::format("{}/tex1_{}x{}_{:016X}_{}.png", dump_dir, info.width,
@@ -34,9 +35,9 @@ void DumpTextureToPNG(const u8* source, const TextureInfo& info) {
     LOG_INFO(Render, "Dumping texture to {}", dump_path);
     std::vector<u8> rgba8_tex;
 
-    rgba8_tex.resize(info.width * info.height * 4);
-    for (unsigned y = 0; y < info.height; ++y) {
-        for (unsigned x = 0; x < info.width; ++x) {
+    rgba8_tex.resize((rect.top - rect.bottom) * (rect.right - rect.left) * 4);
+    for (unsigned y = rect.bottom; y < rect.top; ++y) {
+        for (unsigned x = rect.left; x < rect.right; ++x) {
             auto vec4 = Pica::Texture::LookupTexture(source, x, y, info);
             const std::size_t offset = (x + (info.width * y)) * 4;
             std::memcpy(&rgba8_tex[offset], vec4.AsArray(), 4);

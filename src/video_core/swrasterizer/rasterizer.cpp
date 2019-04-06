@@ -413,10 +413,6 @@ static void ProcessTriangleInternal(const Vertex& v0, const Vertex& v1, const Ve
 
                     // TODO: Apply the min and mag filters to the texture
                     texture_color[i] = Texture::LookupTexture(texture_data, s, t, info);
-
-                    // TODO: Can this be placed in a better spot?
-                    if (Settings::values.dump_textures)
-                        Pica::Texture::DumpTextureToPNG(texture_data, info);
                 }
 
                 if (i == 0 && (texture.config.type == TexturingRegs::TextureConfig::Shadow2D ||

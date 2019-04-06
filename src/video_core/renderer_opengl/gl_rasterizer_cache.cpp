@@ -802,7 +802,7 @@ void CachedSurface::LoadGLBuffer(PAddr load_start, PAddr load_end) {
             }
 
             if (Settings::values.dump_textures)
-                Pica::Texture::DumpTextureToPNG(texture_src_data, tex_info);
+                Pica::Texture::DumpTextureToPNG(texture_src_data, tex_info, rect);
 
         } else {
             morton_to_gl_fns[static_cast<std::size_t>(pixel_format)](stride, height, &gl_buffer[0],
