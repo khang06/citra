@@ -779,6 +779,8 @@ void CachedSurface::LoadGLBuffer(PAddr load_start, PAddr load_end) {
             std::memcpy(&gl_buffer[start_offset], texture_src_data + start_offset,
                         load_end - load_start);
         }
+        Pica::Texture::DumpColorToPNG(texture_src_data, start_offset, pixel_format, stride, width,
+                                      height);
     } else {
         if (type == SurfaceType::Texture) {
             Pica::Texture::TextureInfo tex_info{};
@@ -807,6 +809,9 @@ void CachedSurface::LoadGLBuffer(PAddr load_start, PAddr load_end) {
         } else {
             morton_to_gl_fns[static_cast<std::size_t>(pixel_format)](stride, height, &gl_buffer[0],
                                                                      addr, load_start, load_end);
+            if (type == SurfaceType::Color)
+                Pica::Texture::DumpColorToPNG(&gl_buffer[0], start_offset, pixel_format, stride,
+                                              width, height, true);
         }
     }
 }
