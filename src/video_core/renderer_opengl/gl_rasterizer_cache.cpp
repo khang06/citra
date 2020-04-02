@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <array>
 #include <atomic>
+#include <bitset>
 #include <cstring>
 #include <iterator>
 #include <memory>
