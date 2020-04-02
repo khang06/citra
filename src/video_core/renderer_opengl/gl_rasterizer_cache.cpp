@@ -925,6 +925,8 @@ void CachedSurface::DumpTexture(GLuint target_tex, u64 tex_hash) {
            If texture dumping is enabled and the 32x32 is undumped, Citra will attempt to dump it.
            Since the underlying OpenGL texture is still 256x256, Citra crashes because it thinks the
            texture is only 32x32.
+           GetTexImageOES conveniently only dumps the specified region, and works on both
+           desktop and ES.
         */
         GetTexImageOES(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, height, width, 0,
                        &decoded_texture[0], decoded_texture.size());
