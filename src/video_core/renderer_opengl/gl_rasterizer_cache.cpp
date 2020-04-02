@@ -886,6 +886,7 @@ bool CachedSurface::LoadCustomTexture(u64 tex_hash, Core::CustomTexInfo& tex_inf
 
 void CachedSurface::DumpTexture(GLuint target_tex, u64 tex_hash) {
     // Make sure the texture size is a power of 2
+    // If not, the surface is actually a framebuffer
     std::bitset<32> width_bits(width);
     std::bitset<32> height_bits(height);
     if (width_bits.count() != 1 || height_bits.count() != 1) {
@@ -918,13 +919,12 @@ void CachedSurface::DumpTexture(GLuint target_tex, u64 tex_hash) {
            GetTexImageOES is used even if not using OpenGL ES to work around a small issue that
            happens if using custom textures with texture dumping at the same.
            Let's say there's 2 textures that are both 32x32 and one of them gets replaced with a
-           higher quality 256x256 texture. If the 256x256 texture is displayed first and the
-           32x32 texture gets uploaded to the same underlying OpenGL texture, the 32x32 texture
-           will appear in the corner of the 256x256 texture. If texture dumping is enabled and
-           the 32x32 is undumped, Citra will attempt to dump it. Since the underlying OpenGL
-           texture is still 256x256, Citra crashes because it thinks the texture is only 32x32.
-           GetTexImageOES conveniently only dumps the specified region, and works on both
-           desktop and ES.
+           higher quality 256x256 texture. If the 256x256 texture is displayed first and the 32x32
+           texture gets uploaded to the same underlying OpenGL texture, the 32x32 texture will
+           appear in the corner of the 256x256 texture.
+           If texture dumping is enabled and the 32x32 is undumped, Citra will attempt to dump it.
+           Since the underlying OpenGL texture is still 256x256, Citra crashes because it thinks the
+           texture is only 32x32.
         */
         GetTexImageOES(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, height, width, 0,
                        &decoded_texture[0], decoded_texture.size());
